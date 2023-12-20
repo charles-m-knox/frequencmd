@@ -242,6 +242,7 @@ func runCommand(command *Command /* command string, args []string, env []string 
 		runIndex.Store(jobId, false)
 		errors.SetText(fmt.Sprintf("error running command: %v", err.Error()))
 		exitCode.SetText(fmt.Sprintf("[red] Exit code: %v", cmd.ProcessState.ExitCode()))
+		app.QueueUpdateDraw(func() {})
 		return
 	}
 	runIndex.Store(jobId, false)

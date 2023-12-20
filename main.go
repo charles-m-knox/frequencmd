@@ -65,8 +65,8 @@ type Keybinding struct {
 
 func loadConfig() (c Config, err error) {
 	// TODO: later on, try current dir, then xdg_config_dir, then xdg_user_dir
-	xdgConfig := path.Join(xdg.ConfigHome, "frequentcmd", "config.yml")
-	xdgHome := path.Join(xdg.Home, "frequentcmd", "config.yml")
+	xdgConfig := path.Join(xdg.ConfigHome, "frequencmd", "config.yml")
+	xdgHome := path.Join(xdg.Home, "frequencmd", "config.yml")
 	curConf := "config.yml"
 
 	b, err := os.ReadFile(curConf)

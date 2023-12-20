@@ -1,0 +1,112 @@
+---
+idleRefreshRateMs: 500
+processRunningRefreshRateMs: 100
+
+commands:
+  - label: "2200K"
+    command: "redshift"
+    args: "-P -O 2200"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "2700K"
+    command: "redshift"
+    args: "-P -O 2700"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "3500K"
+    command: "redshift"
+    args: "-P -O 3500"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "4800K"
+    command: "redshift"
+    args: "-P -O 4800"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "6500K"
+    command: "redshift"
+    args: "-P -O 6500"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "brightness 100%"
+    command: "/bin/bash"
+    shell: "xrandr --output eDP-1 --brightness 1"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "brightness 25%"
+    command: "/bin/bash"
+    shell: "xrandr --output eDP-1 --brightness 0.25"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "brightness 100% external"
+    command: "/bin/bash"
+    shell: "xrandr --output DP-1 --brightness 1"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "brightness 25% external"
+    command: "/bin/bash"
+    shell: "xrandr --output DP-1 --brightness 0.25"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "get current power"
+    command: "/bin/bash"
+    shell: "sudo cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor | uniq"
+
+  - label: "powersaver"
+    command: "/bin/bash"
+    shell: "echo powersave | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+
+  - label: "performance"
+    command: "/bin/bash"
+    shell: "echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+
+  - label: "turn external monitor on"
+    command: "/bin/bash"
+    shell: "xrandr --output DP-1 --mode 1920x1080"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "turn external monitor off"
+    command: "/bin/bash"
+    shell: "DISPLAY=:0 xrandr --output DP-1 --off"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "caffeine"
+    command: "xset"
+    args: "s off -dpms"
+    env:
+      - "DISPLAY=:0"
+
+  - label: "idle"
+    command: "/bin/bash"
+    shell: "DISPLAY=:0 xset s blank; DISPLAY=:0 xset s 5 5 +dpms;"
+
+  - label: "battery level"
+    command: "/bin/bash"
+    shell: "echo $(cat /sys/class/power_supply/BAT1/capacity)%"
+
+  - label: "battery status"
+    command: "/bin/bash"
+    shell: "cat /sys/class/power_supply/BAT1/status"
+
+  - label: "test long output"
+    command: "/bin/bash"
+    shell: "for ((i = 0 ; i < 100 ; i++ )); do echo $i ; sleep 0.01; done"
+
+  # - label: "dnf update -y"
+  #   command: "/bin/bash"
+  #   shell: "sudo dnf update -y"
+
+  - label: "suspend"
+    command: "/bin/bash"
+    shell: "sudo systemctl suspend"

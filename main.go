@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -28,7 +26,6 @@ const (
 )
 
 var (
-	lastCmd                *Command
 	commands               *[]Command
 	list                   *tview.List
 	layout                 *tview.Flex
@@ -37,15 +34,11 @@ var (
 	exitCode               *tview.TextView
 	bottomLeftText         *tview.TextView
 	bottomLeftSearch       *tview.InputField
-	bottomLeftBox          *tview.Box
 	globalProcessesRunning int
-	stdoutLines            []string
-	stderrLines            []string
 	app                    *tview.Application
 	runIndex               sync.Map
 	isSearching            bool
 	searchTerm             string
-	keybindings            []Keybinding
 	config                 Config
 	currentlyFocusedBox    string
 	filteredResults        []string
@@ -53,18 +46,11 @@ var (
 
 type Config struct {
 	Commands                    []ConfigCommand `yaml:"commands"`
-	Keybindings                 []Keybinding    `yaml:"keybindings"`
 	IdleRefreshRateMs           int             `yaml:"idleRefreshRateMs"`
 	ProcessRunningRefreshRateMs int             `yaml:"processRunningRefreshRateMs"`
 }
 
-type Keybinding struct {
-	Action     string
-	Keybinding string
-}
-
 func loadConfig() (c Config, err error) {
-	// TODO: later on, try current dir, then xdg_config_dir, then xdg_user_dir
 	xdgConfig := path.Join(xdg.ConfigHome, "frequencmd", "config.yml")
 	xdgHome := path.Join(xdg.Home, "frequencmd", "config.yml")
 	curConf := "config.yml"
@@ -137,29 +123,11 @@ func parseConfigCommands(conf Config) {
 	}
 }
 
-func logOutput(output io.ReadCloser, lines *[]string, prefix string, view *tview.TextView, color tcell.Color) {
-	*lines = []string{}
-	scanner := bufio.NewScanner(output)
-	for scanner.Scan() {
-		line := scanner.Text()
-		*lines = append(*lines, line)
-		var sb strings.Builder
-		linesLen := len(*lines)
-		for i := linesLen - 1; i >= linesLen-maxLogLines && i >= 0; i-- {
-			fmt.Fprintf(&sb, "%v%v:[%v] %v\n", prefix, getNowStr(), color, (*lines)[i])
-		}
-		view.SetText(sb.String())
-		app.QueueUpdateDraw(func() {})
-		// log.Print(line)
-	}
-}
-
 func getNowStr() string {
 	return time.Now().Format("15:04:05")
 }
 
 func setLastCommandText(cmd *Command) {
-	lastCmd = cmd
 	exitCode.SetTitle(fmt.Sprintf("exit code for: %v", cmd.Label))
 }
 
@@ -614,22 +582,6 @@ func main() {
 				return e
 			}
 		} else {
-			// if isSearching {
-			// 	setBottomLeftText("[aqua]searching:")
-			// 	bottomLeftSearch.SetDisabled(false)
-			// 	bottomLeftSearch.Focus(func(p tview.Primitive) {})
-			// 	searchTerm = fmt.Sprintf("%v%v", searchTerm, string(e.Rune()))
-			// 	bottomLeftSearch.SetChangedFunc(func(text string) {
-			// 		if list != nil {
-			// 			list.Clear()
-			// 		}
-			// 		searchTerm = text
-			// 		getFilteredList(list, commands, searchTerm)
-			// 		bottomLeftSearch.SetText(searchTerm)
-			// 		bottomLeftSearch.Focus(func(p tview.Primitive) {})
-			// 	})
-			// 	return nil
-			// }
 			if !isSearching {
 				app.SetFocus(list)
 			}

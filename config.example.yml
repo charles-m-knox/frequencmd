@@ -103,10 +103,6 @@ commands:
     command: "/bin/bash"
     shell: "for ((i = 0 ; i < 100 ; i++ )); do echo $i ; sleep 0.01; done"
 
-  # - label: "dnf update -y"
-  #   command: "/bin/bash"
-  #   shell: "sudo dnf update -y"
-
   - label: "suspend"
     command: "/bin/bash"
     shell: "sudo systemctl suspend"

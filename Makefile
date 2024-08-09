@@ -1,7 +1,7 @@
 .PHONY=build
 
 BUILDDIR=build
-VER=0.0.3
+VER=0.0.4
 BIN=$(BUILDDIR)/frequencmd-v$(VER)
 UNAME=$(shell go env GOOS)
 ARCH=$(shell go env GOARCH)

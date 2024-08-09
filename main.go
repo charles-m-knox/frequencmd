@@ -109,13 +109,21 @@ func parseConfigCommands(conf Config) {
 		c := conf.Commands[i]
 
 		n := Command{
-			Command: c.Command,
-			Env:     c.Env,
-			Label:   c.Label,
+			Command:          c.Command,
+			Env:              c.Env,
+			Label:            c.Label,
+			ShellBashArgs:    c.ShellBashArgs,
+			LaunchSeparately: c.LaunchSeparately,
 		}
 
 		if c.Shell != "" {
-			n.Args = []string{"-c", c.Shell}
+			if c.ShellBashArgs != "" {
+				n.Args = []string{}
+				n.Args = append(n.Args, strings.Split(c.ShellBashArgs, " ")...)
+				n.Args = append(n.Args, "-c", c.Shell)
+			} else {
+				n.Args = []string{"-c", c.Shell}
+			}
 		} else {
 			n.Args = strings.Split(c.Args, " ")
 		}
@@ -207,7 +215,12 @@ func runCommand(command *Command /* command string, args []string, env []string 
 	cmd.Stdout = info
 	cmd.Stderr = errors
 	// Run the command
-	err := cmd.Run()
+	var err error
+	if command.LaunchSeparately {
+		err = cmd.Start()
+	} else {
+		err = cmd.Run()
+	}
 	if err != nil {
 		runIndex.Store(jobId, false)
 		errors.SetText(fmt.Sprintf("error running command: %v", err.Error()))
@@ -235,14 +248,24 @@ type Command struct {
 	Command string
 	Args    []string
 	Env     []string
+	// Arguments to always pass to the /bin/bash executable when using a shell.
+	// For example, normally commands are executed via /bin/bash -c "shell"
+	// but you may want to specify a login shell via /bin/bash -i -c "shell",
+	// in which case ShellBashArgs would be "-i".
+	ShellBashArgs string
+	// Instead of following the output, the program gets launched and
+	// frequencmd doesn't care about it. Useful for graphical apps.
+	LaunchSeparately bool
 }
 
 type ConfigCommand struct {
-	Label   string   `yaml:"label"`
-	Command string   `yaml:"command"`
-	Shell   string   `yaml:"shell"`
-	Args    string   `yaml:"args"`
-	Env     []string `yaml:"env"`
+	Label            string   `yaml:"label"`
+	Command          string   `yaml:"command"`
+	Shell            string   `yaml:"shell"`
+	Args             string   `yaml:"args"`
+	Env              []string `yaml:"env"`
+	ShellBashArgs    string   `yaml:"shellBashArgs"`
+	LaunchSeparately bool     `yaml:"launchSeparately"`
 }
 
 func getFilteredList(l *tview.List, commands []Command, filterString string) {

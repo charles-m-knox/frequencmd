@@ -202,6 +202,8 @@ func runCommand(command *Command /* command string, args []string, env []string 
 	cmd := exec.Command(command.Command, command.Args...)
 	cmd.Env = append(cmd.Env, command.Env...)
 
+	info.SetText(fmt.Sprintf("Running:\n%v %v %v\n\n", strings.Join(command.Env, " "), command.Command, strings.Join(command.Args, " ")))
+
 	cmd.Stdout = info
 	cmd.Stderr = errors
 	// Run the command

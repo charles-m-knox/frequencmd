@@ -1,8 +1,10 @@
 .PHONY=build
 
 BUILDDIR=build
-VER=0.0.1
+VER=0.0.2
 BIN=$(BUILDDIR)/frequencmd-v$(VER)
+UNAME=$(shell go env GOOS)
+ARCH=$(shell go env GOARCH)
 
 build-dev:
 	CGO_ENABLED=0 go build -v
@@ -11,7 +13,7 @@ mkbuilddir:
 	mkdir -p $(BUILDDIR)
 
 build-prod: mkbuilddir
-	CGO_ENABLED=0 go build -v -o $(BIN) -ldflags="-w -s -buildid=" -trimpath
+	make build-$(UNAME)-$(ARCH)
 
 run:
 	./$(BIN)

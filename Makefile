@@ -14,6 +14,7 @@ mkbuilddir:
 
 build-prod: mkbuilddir
 	make build-$(UNAME)-$(ARCH)
+	rsync -avP $(BIN)-$(UNAME)-$(ARCH) ./frequencmd
 
 run:
 	./$(BIN)

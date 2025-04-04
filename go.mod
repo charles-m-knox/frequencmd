@@ -1,4 +1,4 @@
-module frequencmd
+module github.com/charles-m-knox/frequencmd
 
 go 1.21.5
 

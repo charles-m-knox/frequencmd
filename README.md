@@ -40,6 +40,12 @@ make build-dev
 ./frequencmd
 ```
 
+Alternatively, you can install via `go install`:
+
+```bash
+go install github.com/charles-m-knox/frequencmd@latest
+```
+
 ## Configuration
 
 The application will first attempt to read from the first file it finds at the following locations:

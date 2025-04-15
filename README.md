@@ -33,18 +33,13 @@ Then, copy `config.example.yml` to `~/.config/frequencmd/config.yml` and modify 
 
 ## Building locally
 
-Requires Go. It is a very lean application and should be easy to get running:
+Requires Go. It is a very lean application and should be easy to get running. You can install it via `go install`:
 
 ```bash
-make build-dev
-./frequencmd
+CGO_ENABLED=0 go install -ldflags="-s -w" github.com/charles-m-knox/frequencmd@latest
 ```
 
-Alternatively, you can install via `go install`:
-
-```bash
-go install github.com/charles-m-knox/frequencmd@latest
-```
+Just make sure you have configured your `$PATH` environment variable to include your go bin directory.
 
 ## Configuration
 
